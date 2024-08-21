@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body class="bg-gray-100 text-gray-900">
-    <header class="bg-blue-600 text-white p-4 text-center">
+    <header class="bg-blue-600 text-white p-4 text-center relative">
         <h1 class="text-3xl font-bold">Mood Daily Tracker</h1>
         <button id="dark-mode-toggle" class="absolute top-4 right-4 bg-gray-700 text-white p-2 rounded">
             Toggle Dark Mode
@@ -16,6 +16,11 @@
     </header>
 
     <main class="min-h-screen p-4">
+        <!-- Streak Section -->
+        <section id="streak-section" class="mb-8 text-center">
+            <!-- Dynamic streak data will be inserted here -->
+        </section>
+
         <!-- Mood Log Section -->
         <section class="mb-8">
             <h2 class="text-2xl font-bold mb-4">Log Today's Mood</h2>
