@@ -64,6 +64,27 @@
             <h2 class="text-2xl font-bold mb-4">Mood Trends</h2>
             <canvas id="mood-chart" class="bg-white p-4 rounded shadow-lg"></canvas>
         </section>
+
+        <!-- Additional Charts Section -->
+        <section id="additional-charts" class="mt-8">
+            <h2 class="text-2xl font-bold mb-4">Additional Analysis</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Mood Distribution</h3>
+                    <canvas id="mood-pie-chart"></canvas>
+                </div>
+                <div class="bg-white p-4 rounded shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Mood Intensity Over Time</h3>
+                    <canvas id="mood-line-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Export and Share Section -->
+        <section id="export-share" class="mt-8 text-center">
+            <button id="export-csv" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Export as CSV</button>
+            <button id="share-data" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 ml-4">Share Data</button>
+        </section>
     </main>
 
     <footer class="bg-blue-600 text-white p-4 text-center">
@@ -73,7 +94,6 @@
     <script src="scripts/app.js"></script>
     <script src="scripts/storage.js"></script>
     <script src="scripts/chart.js"></script>
-</body>
-</html>
+    <script src="scripts/export.js"></script>
 </body>
 </html>

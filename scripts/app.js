@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const darkModeToggle = document.getElementById('dark-mode-toggle');
     const averageMoodElement = document.getElementById('average-mood');
 
+    const moodPieChartElement = document.getElementById('mood-pie-chart').getContext('2d');
+    const moodLineChartElement = document.getElementById('mood-line-chart').getContext('2d');
+
     let moods = [];
     let isDarkMode = JSON.parse(localStorage.getItem('isDarkMode')) || false;
 
@@ -14,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMoodHistory();
         updateMoodChart();
         displayAverageMood();
+        updatePieChart();
+        updateLineChart();
         displayStreak();
     }
 
@@ -31,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
             updateMoodHistory();
             updateMoodChart();
             displayAverageMood();
+            updatePieChart();
+            updateLineChart();
             displayStreak();
             moodForm.reset();
         }
@@ -61,6 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
         saveMoods();
         updateMoodHistory();
         updateMoodChart();
+        updatePieChart();
+        updateLineChart();
         displayAverageMood();
         displayStreak();
     };
@@ -71,6 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
         saveMoods();
         updateMoodHistory();
         updateMoodChart();
+        updatePieChart();
+        updateLineChart();
         displayAverageMood();
         displayStreak();
     };
@@ -129,6 +140,83 @@ document.addEventListener('DOMContentLoaded', () => {
                     pointRadius: 0,
                     type: 'line',
                     borderDash: [10, 5],
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Update the Pie chart for mood distribution
+    function updatePieChart() {
+        const moodCounts = {
+            happy: 0,
+            sad: 0,
+            anxious: 0,
+            excited: 0,
+            angry: 0,
+            neutral: 0
+        };
+
+        moods.forEach(entry => {
+            moodCounts[entry.mood]++;
+        });
+
+        new Chart(moodPieChartElement, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(moodCounts),
+                datasets: [{
+                    data: Object.values(moodCounts),
+                    backgroundColor: [
+                        '#4CAF50', '#F44336', '#FFC107', '#2196F3', '#FF5722', '#9E9E9E'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    }
+
+    // Update the Line chart for mood intensity over time
+    function updateLineChart() {
+        const moodScores = {
+            happy: 5,
+            excited: 4,
+            neutral: 3,
+            anxious: 2,
+            sad: 1,
+            angry: 0
+        };
+
+        const labels = [];
+        const scores = [];
+
+        moods.forEach(entry => {
+            labels.push(entry.date);
+            scores.push(moodScores[entry.mood]);
+        });
+
+        new Chart(moodLineChartElement, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Mood Intensity',
+                    data: scores,
+                    backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    borderWidth: 2,
+                    fill: false
                 }]
             },
             options: {
@@ -225,4 +313,3 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('dark-mode');
     }
 });
-

@@ -49,3 +49,8 @@ button:hover {
     background-color: #2a4365;
     color: #63b3ed;
 }
+
+/* Additional Charts Section Styles */
+#additional-charts {
+    margin-top: 2rem;
+}
