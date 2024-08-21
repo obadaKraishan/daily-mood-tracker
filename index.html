@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Daily Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <header class="bg-blue-600 text-white p-4 text-center">
+        <h1 class="text-3xl font-bold">Mood Daily Tracker</h1>
+        <button id="dark-mode-toggle" class="absolute top-4 right-4 bg-gray-700 text-white p-2 rounded">
+            Toggle Dark Mode
+        </button>
+    </header>
+
+    <main class="min-h-screen p-4">
+        <!-- Mood Log Section -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Log Today's Mood</h2>
+            <form id="mood-form" class="bg-white p-4 rounded shadow-lg">
+                <div class="mb-4">
+                    <label for="mood" class="block">Select Your Mood:</label>
+                    <select id="mood" class="w-full p-2 border rounded">
+                        <option value="happy">😊 Happy</option>
+                        <option value="sad">😢 Sad</option>
+                        <option value="anxious">😟 Anxious</option>
+                        <option value="excited">😄 Excited</option>
+                        <option value="angry">😠 Angry</option>
+                        <option value="neutral">😐 Neutral</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="note" class="block">Add a Note (Optional):</label>
+                    <textarea id="note" class="w-full p-2 border rounded" placeholder="Describe your day..."></textarea>
+                </div>
+                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">Log Mood</button>
+            </form>
+        </section>
+
+        <!-- Mood History Section -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Mood History</h2>
+            <div id="mood-history" class="bg-white p-4 rounded shadow-lg">
+                <!-- Dynamic content will be added here -->
+            </div>
+        </section>
+
+        <!-- Mood Graph Section -->
+        <section>
+            <h2 class="text-2xl font-bold mb-4">Mood Trends</h2>
+            <canvas id="mood-chart" class="bg-white p-4 rounded shadow-lg"></canvas>
+        </section>
+    </main>
+
+    <footer class="bg-blue-600 text-white p-4 text-center">
+        <p>&copy; 2024 Mood Daily Tracker. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts/chart.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/storage.js"></script>
+</body>
+</html>
