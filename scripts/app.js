@@ -39,16 +39,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update the mood history UI
     function updateMoodHistory() {
         moodHistory.innerHTML = '';
-        moods.forEach((entry) => {
+        moods.forEach((entry, index) => {
             const listItem = document.createElement('div');
             listItem.classList.add('border-b', 'py-2', 'flex', 'justify-between', 'items-center');
             listItem.innerHTML = `
                 <span>${entry.date}: ${entry.mood}</span>
                 <p>${entry.note ? ` - ${entry.note}` : ''}</p>
+                <button onclick="editMood(${index})" class="text-blue-500 hover:text-blue-700">Edit</button>
+                <button onclick="deleteMood(${index})" class="text-red-500 hover:text-red-700">Delete</button>
             `;
             moodHistory.appendChild(listItem);
         });
     }
+
+    // Edit a mood
+    window.editMood = function(index) {
+        const mood = moods[index];
+        document.getElementById('mood').value = mood.mood;
+        document.getElementById('note').value = mood.note;
+        moods.splice(index, 1);  // Remove the old mood entry
+        saveMoods();
+        updateMoodHistory();
+        updateMoodChart();
+        displayAverageMood();
+        displayStreak();
+    };
+
+    // Delete a mood
+    window.deleteMood = function(index) {
+        moods.splice(index, 1);
+        saveMoods();
+        updateMoodHistory();
+        updateMoodChart();
+        displayAverageMood();
+        displayStreak();
+    };
 
     // Update the mood chart
     function updateMoodChart() {
@@ -73,36 +98,32 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         let totalScore = 0;
+        const labels = [];
 
         moods.forEach(entry => {
             moodCounts[entry.mood]++;
             totalScore += moodScores[entry.mood];
+            labels.push(entry.date);
         });
 
         const averageMoodScore = totalScore / moods.length;
 
         new Chart(moodChartElement, {
-            type: 'line',
+            type: 'bar',  // Changed to bar chart
             data: {
-                labels: ['Happy', 'Sad', 'Anxious', 'Excited', 'Angry', 'Neutral'],
+                labels: labels,
                 datasets: [{
                     label: 'Mood Frequency',
-                    data: [
-                        moodCounts.happy,
-                        moodCounts.sad,
-                        moodCounts.anxious,
-                        moodCounts.excited,
-                        moodCounts.angry,
-                        moodCounts.neutral
+                    data: Object.values(moodCounts),
+                    backgroundColor: [
+                        '#4CAF50', '#F44336', '#FFC107', '#2196F3', '#FF5722', '#9E9E9E'
                     ],
-                    backgroundColor: 'rgba(0, 123, 255, 0.5)',
                     borderColor: 'rgba(0, 123, 255, 1)',
                     borderWidth: 2,
-                    fill: false,
-                    lineTension: 0.1
+                    fill: false
                 }, {
                     label: 'Average Mood Score',
-                    data: new Array(6).fill(averageMoodScore),
+                    data: new Array(moods.length).fill(averageMoodScore),
                     borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 1,
                     pointRadius: 0,
@@ -204,3 +225,4 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('dark-mode');
     }
 });
+

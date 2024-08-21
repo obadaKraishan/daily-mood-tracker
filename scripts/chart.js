@@ -18,31 +18,33 @@ function updateMoodChart() {
     };
 
     let totalScore = 0;
+    const labels = [];
 
     moods.forEach(entry => {
         moodCounts[entry.mood]++;
         totalScore += moodScores[entry.mood];
+        labels.push(entry.date);
     });
 
     const averageMoodScore = totalScore / moods.length;
-    const averageMood = getAverageMood(averageMoodScore);
 
     const ctx = document.getElementById('mood-chart').getContext('2d');
     new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
-            labels: Object.keys(moodCounts),
+            labels: labels,
             datasets: [{
                 label: 'Mood Frequency',
                 data: Object.values(moodCounts),
-                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                backgroundColor: [
+                    '#4CAF50', '#F44336', '#FFC107', '#2196F3', '#FF5722', '#9E9E9E'
+                ],
                 borderColor: 'rgba(0, 123, 255, 1)',
                 borderWidth: 2,
-                fill: false,
-                lineTension: 0.1
+                fill: false
             }, {
                 label: 'Average Mood Score',
-                data: new Array(Object.keys(moodCounts).length).fill(averageMoodScore),
+                data: new Array(moods.length).fill(averageMoodScore),
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1,
                 pointRadius: 0,
