@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mood Daily Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body class="bg-gray-100 text-gray-900">
@@ -19,6 +20,12 @@
         <!-- Streak Section -->
         <section id="streak-section" class="mb-8 text-center">
             <!-- Dynamic streak data will be inserted here -->
+        </section>
+
+        <!-- Average Mood Section -->
+        <section id="average-mood-section" class="mb-8 text-center bg-white p-4 rounded shadow-lg">
+            <h2 class="text-2xl font-bold mb-4">Average Mood</h2>
+            <div id="average-mood" class="text-xl"></div>
         </section>
 
         <!-- Mood Log Section -->
@@ -63,8 +70,10 @@
         <p>&copy; 2024 Mood Daily Tracker. All rights reserved.</p>
     </footer>
 
-    <script src="scripts/chart.js"></script>
     <script src="scripts/app.js"></script>
     <script src="scripts/storage.js"></script>
+    <script src="scripts/chart.js"></script>
+</body>
+</html>
 </body>
 </html>

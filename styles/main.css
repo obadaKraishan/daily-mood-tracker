@@ -24,3 +24,28 @@ button:hover {
     background-color: #2d3748;
     color: #cbd5e0;
 }
+
+/* Streak Section Styles */
+#streak-section {
+    background-color: #e6fffa;
+    color: #319795;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode #streak-section {
+    background-color: #22543d;
+    color: #9ae6b4;
+}
+
+/* Average Mood Section Styles */
+#average-mood-section {
+    background-color: #ebf8ff;
+    color: #3182ce;
+}
+
+.dark-mode #average-mood-section {
+    background-color: #2a4365;
+    color: #63b3ed;
+}

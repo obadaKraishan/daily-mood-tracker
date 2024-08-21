@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const moodHistory = document.getElementById('mood-history');
     const moodChartElement = document.getElementById('mood-chart').getContext('2d');
     const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const averageMoodElement = document.getElementById('average-mood');
 
     let moods = [];
     let isDarkMode = JSON.parse(localStorage.getItem('isDarkMode')) || false;
@@ -12,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
         moods = JSON.parse(localStorage.getItem('moods')) || [];
         updateMoodHistory();
         updateMoodChart();
+        displayAverageMood();
+        displayStreak();
     }
 
     // Add a new mood
@@ -27,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
             saveMoods();
             updateMoodHistory();
             updateMoodChart();
+            displayAverageMood();
+            displayStreak();
             moodForm.reset();
         }
     });
@@ -47,6 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update the mood chart
     function updateMoodChart() {
+        if (!moods.length) return; // If no data, don't render the chart
+
         const moodCounts = {
             happy: 0,
             sad: 0,
@@ -73,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const averageMoodScore = totalScore / moods.length;
-        const averageMood = getAverageMood(averageMoodScore);
 
         new Chart(moodChartElement, {
             type: 'line',
@@ -110,22 +116,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     y: {
                         beginAtZero: true
                     }
-                },
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                const label = context.dataset.label || '';
-                                if (label) {
-                                    return `${label}: ${context.raw}`;
-                                }
-                                return context.raw;
-                            }
-                        }
-                    }
                 }
             }
         });
+    }
+
+    // Display the average mood
+    function displayAverageMood() {
+        if (!moods.length) {
+            averageMoodElement.textContent = 'No data available';
+            return;
+        }
+
+        const moodScores = {
+            happy: 5,
+            excited: 4,
+            neutral: 3,
+            anxious: 2,
+            sad: 1,
+            angry: 0
+        };
+
+        let totalScore = 0;
+
+        moods.forEach(entry => {
+            totalScore += moodScores[entry.mood];
+        });
+
+        const averageMoodScore = totalScore / moods.length;
+        const averageMood = getAverageMood(averageMoodScore);
+
+        averageMoodElement.textContent = `Your average mood is: ${averageMood}`;
     }
 
     // Get the average mood based on score
@@ -166,10 +187,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Display the current streak
     function displayStreak() {
         const streak = loadStreak();
-        const streakElement = document.createElement('div');
-        streakElement.classList.add('text-center', 'p-4', 'bg-green-100', 'rounded');
+        const streakElement = document.getElementById('streak-section');
         streakElement.innerHTML = `<strong>Current Streak:</strong> ${streak} days`;
-        document.querySelector('main').prepend(streakElement);
     }
 
     // Toggle dark mode
@@ -181,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load initial settings and data
     loadMoods();
-    displayStreak();
     if (isDarkMode) {
         document.body.classList.add('dark-mode');
     }
