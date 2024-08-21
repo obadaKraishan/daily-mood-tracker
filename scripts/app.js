@@ -110,6 +110,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     y: {
                         beginAtZero: true
                     }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const label = context.dataset.label || '';
+                                if (label) {
+                                    return `${label}: ${context.raw}`;
+                                }
+                                return context.raw;
+                            }
+                        }
+                    }
                 }
             }
         });
