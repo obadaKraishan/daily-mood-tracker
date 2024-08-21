@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePieChart();
         updateLineChart();
         displayStreak();
+        initializeExportAndShare(moods);
     }
 
     // Add a new mood
@@ -39,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePieChart();
             updateLineChart();
             displayStreak();
+            initializeExportAndShare(moods);
             moodForm.reset();
         }
     });
@@ -72,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLineChart();
         displayAverageMood();
         displayStreak();
+        initializeExportAndShare(moods);
     };
 
     // Delete a mood
@@ -84,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLineChart();
         displayAverageMood();
         displayStreak();
+        initializeExportAndShare(moods);
     };
 
     // Update the mood chart
@@ -298,6 +302,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const streak = loadStreak();
         const streakElement = document.getElementById('streak-section');
         streakElement.innerHTML = `<strong>Current Streak:</strong> ${streak} days`;
+    }
+
+    // Initialize export and share functionality
+    function initializeExportAndShare(moods) {
+        document.getElementById('export-csv').addEventListener('click', () => {
+            if (moods.length) {
+                const csvContent = "data:text/csv;charset=utf-8," + moods.map(e => `${e.date},${e.mood},${e.note || ''}`).join("\n");
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "mood_data.csv");
+                document.body.appendChild(link);
+                link.click();
+            } else {
+                alert("No mood data available to export.");
+            }
+        });
+
+        document.getElementById('share-data').addEventListener('click', () => {
+            if (moods.length) {
+                const shareText = moods.map(e => `Date: ${e.date}, Mood: ${e.mood}, Note: ${e.note || ''}`).join("\n");
+                const shareLink = `mailto:?subject=Mood Data&body=${encodeURIComponent(shareText)}`;
+                window.location.href = shareLink;
+            } else {
+                alert("No mood data available to share.");
+            }
+        });
     }
 
     // Toggle dark mode
