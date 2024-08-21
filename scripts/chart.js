@@ -1,4 +1,9 @@
+let moodChartInstance; // Variable to hold the chart instance
+
 function updateMoodChart() {
+    const moodChartElement = document.getElementById('mood-chart');
+    if (!moodChartElement) return;
+
     const moodCounts = {
         happy: 0,
         sad: 0,
@@ -28,8 +33,14 @@ function updateMoodChart() {
 
     const averageMoodScore = totalScore / moods.length;
 
-    const ctx = document.getElementById('mood-chart').getContext('2d');
-    new Chart(ctx, {
+    const ctx = moodChartElement.getContext('2d');
+
+    // Destroy the previous chart instance if it exists
+    if (moodChartInstance) {
+        moodChartInstance.destroy();
+    }
+
+    moodChartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
@@ -53,6 +64,7 @@ function updateMoodChart() {
             }]
         },
         options: {
+            responsive: true,
             scales: {
                 y: {
                     beginAtZero: true

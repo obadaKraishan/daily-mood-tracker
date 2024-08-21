@@ -1,12 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     const moodForm = document.getElementById('mood-form');
     const moodHistory = document.getElementById('mood-history');
-    const moodChartElement = document.getElementById('mood-chart').getContext('2d');
     const darkModeToggle = document.getElementById('dark-mode-toggle');
     const averageMoodElement = document.getElementById('average-mood');
 
-    const moodPieChartElement = document.getElementById('mood-pie-chart').getContext('2d');
-    const moodLineChartElement = document.getElementById('mood-line-chart').getContext('2d');
+    const moodChartElement = document.getElementById('mood-chart');
+    const moodPieChartElement = document.getElementById('mood-pie-chart');
+    const moodLineChartElement = document.getElementById('mood-line-chart');
+    const moodHeatmapChartElement = document.getElementById('mood-heatmap-chart');
+    const moodRadarChartElement = document.getElementById('mood-radar-chart');
+    const moodHistogramChartElement = document.getElementById('mood-histogram-chart');
 
     let moods = [];
     let isDarkMode = JSON.parse(localStorage.getItem('isDarkMode')) || false;
@@ -15,12 +18,144 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadMoods() {
         moods = JSON.parse(localStorage.getItem('moods')) || [];
         updateMoodHistory();
-        updateMoodChart();
+        if (moodChartElement) updateMoodChart();
+        if (moodPieChartElement) updatePieChart();
+        if (moodLineChartElement) updateLineChart();
+        if (moodHeatmapChartElement) updateHeatmapChart();
+        if (moodRadarChartElement) updateRadarChart();
+        if (moodHistogramChartElement) updateHistogramChart();
         displayAverageMood();
-        updatePieChart();
-        updateLineChart();
         displayStreak();
         initializeExportAndShare(moods);
+    }
+
+    // Heatmap Chart
+    function updateHeatmapChart() {
+        if (!moodHeatmapChartElement) return;
+        const ctx = moodHeatmapChartElement.getContext('2d');
+
+        // Calculate daily mood frequencies
+        const days = Array.from({ length: 31 }, (_, i) => i + 1);
+        const moodFrequencies = days.map(day => {
+            return moods.filter(mood => new Date(mood.date).getDate() === day).length;
+        });
+
+        new Chart(ctx, {
+            type: 'matrix',
+            data: {
+                datasets: [{
+                    label: 'Mood Frequency',
+                    data: moodFrequencies.map((count, index) => ({
+                        x: index + 1,
+                        y: 1,
+                        v: count
+                    })),
+                    backgroundColor: context => {
+                        const value = context.dataset.data[context.dataIndex].v;
+                        return value ? `rgba(0, 123, 255, ${value / Math.max(...moodFrequencies)})` : 'rgba(0,0,0,0)';
+                    },
+                    width: context => context.chart.chartArea.width / 31 - 1,
+                    height: context => context.chart.chartArea.height / 2,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'category',
+                        labels: days,
+                    },
+                    y: {
+                        display: false
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        display: true,
+                        color: '#fff'
+                    }
+                }
+            }
+        });
+    }
+
+    // Radar Chart for Emotional Balance
+    function updateRadarChart() {
+        if (!moodRadarChartElement) return;
+        const ctx = moodRadarChartElement.getContext('2d');
+
+        const moodCounts = {
+            happy: 0,
+            sad: 0,
+            anxious: 0,
+            excited: 0,
+            angry: 0,
+            neutral: 0
+        };
+
+        moods.forEach(entry => {
+            moodCounts[entry.mood]++;
+        });
+
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: Object.keys(moodCounts),
+                datasets: [{
+                    label: 'Emotional Balance',
+                    data: Object.values(moodCounts),
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    r: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Histogram for Mood Distribution
+    function updateHistogramChart() {
+        if (!moodHistogramChartElement) return;
+        const ctx = moodHistogramChartElement.getContext('2d');
+
+        const moodTimes = moods.map(mood => {
+            const date = new Date(mood.date);
+            return date.getHours();
+        });
+
+        const bins = Array.from({ length: 24 }, () => 0);
+        moodTimes.forEach(hour => bins[hour]++);
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+                datasets: [{
+                    label: 'Mood Frequency by Hour',
+                    data: bins,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     }
 
     // Add a new mood
@@ -35,10 +170,13 @@ document.addEventListener('DOMContentLoaded', () => {
             moods.push(newMood);
             saveMoods();
             updateMoodHistory();
-            updateMoodChart();
+            if (moodChartElement) updateMoodChart();
+            if (moodPieChartElement) updatePieChart();
+            if (moodLineChartElement) updateLineChart();
+            if (moodHeatmapChartElement) updateHeatmapChart();
+            if (moodRadarChartElement) updateRadarChart();
+            if (moodHistogramChartElement) updateHistogramChart();
             displayAverageMood();
-            updatePieChart();
-            updateLineChart();
             displayStreak();
             initializeExportAndShare(moods);
             moodForm.reset();
@@ -69,9 +207,12 @@ document.addEventListener('DOMContentLoaded', () => {
         moods.splice(index, 1);  // Remove the old mood entry
         saveMoods();
         updateMoodHistory();
-        updateMoodChart();
-        updatePieChart();
-        updateLineChart();
+        if (moodChartElement) updateMoodChart();
+        if (moodPieChartElement) updatePieChart();
+        if (moodLineChartElement) updateLineChart();
+        if (moodHeatmapChartElement) updateHeatmapChart();
+        if (moodRadarChartElement) updateRadarChart();
+        if (moodHistogramChartElement) updateHistogramChart();
         displayAverageMood();
         displayStreak();
         initializeExportAndShare(moods);
@@ -82,9 +223,12 @@ document.addEventListener('DOMContentLoaded', () => {
         moods.splice(index, 1);
         saveMoods();
         updateMoodHistory();
-        updateMoodChart();
-        updatePieChart();
-        updateLineChart();
+        if (moodChartElement) updateMoodChart();
+        if (moodPieChartElement) updatePieChart();
+        if (moodLineChartElement) updateLineChart();
+        if (moodHeatmapChartElement) updateHeatmapChart();
+        if (moodRadarChartElement) updateRadarChart();
+        if (moodHistogramChartElement) updateHistogramChart();
         displayAverageMood();
         displayStreak();
         initializeExportAndShare(moods);
@@ -92,6 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update the mood chart
     function updateMoodChart() {
+        if (!moodChartElement) return;
+        const ctx = moodChartElement.getContext('2d');
+
         if (!moods.length) return; // If no data, don't render the chart
 
         const moodCounts = {
@@ -123,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const averageMoodScore = totalScore / moods.length;
 
-        new Chart(moodChartElement, {
+        new Chart(ctx, {
             type: 'bar',  // Changed to bar chart
             data: {
                 labels: labels,
@@ -159,6 +306,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update the Pie chart for mood distribution
     function updatePieChart() {
+        if (!moodPieChartElement) return;
+        const ctx = moodPieChartElement.getContext('2d');
+
         const moodCounts = {
             happy: 0,
             sad: 0,
@@ -172,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
             moodCounts[entry.mood]++;
         });
 
-        new Chart(moodPieChartElement, {
+        new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: Object.keys(moodCounts),
@@ -193,6 +343,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update the Line chart for mood intensity over time
     function updateLineChart() {
+        if (!moodLineChartElement) return;
+        const ctx = moodLineChartElement.getContext('2d');
+
         const moodScores = {
             happy: 5,
             excited: 4,
@@ -210,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
             scores.push(moodScores[entry.mood]);
         });
 
-        new Chart(moodLineChartElement, {
+        new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
